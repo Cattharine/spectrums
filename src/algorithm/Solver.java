@@ -1,6 +1,7 @@
 package algorithm;
 
 import algorithm.instances.KFace;
+import algorithm.instances.KFacePair;
 import algorithm.instances.Vertex;
 import java.util.ArrayList;
 import java.util.Stack;
@@ -12,19 +13,19 @@ public class Solver {
 
     public Solver(String table) {
         fullDimension = (int) (Math.log(table.length()) / Math.log(2));
-        Vertex.cleanDist();
+        Vertex.cleanDist(table.length());
         for (var i = 0; i < table.length(); i++) {
             if (table.charAt(i) == '1') {
                 vertexes.add(new Vertex(i, fullDimension));
             }
         }
         spectrum = new int[fullDimension + 1];
-        calculateDistances();
+        calculateDistances(table.length());
     }
 
-    private void calculateDistances() {
-        for (var vertex : vertexes)
-            vertex.calculateDistances(vertexes);
+    private void calculateDistances(int tableLength) {
+        for (var i = 0; i < tableLength; i++)
+            Vertex.binToDist[i] = Vertex.convertBinToDist(i);
     }
 
     public String solve() {
@@ -39,23 +40,24 @@ public class Solver {
     }
 
     private void calculateSpectrum() {
-        var stack = new Stack<KFace>();
+        var stack = new Stack<KFacePair>();
         var face = new KFace(fullDimension, vertexes, -1, fullDimension);
-        var phi = face.getPhi();
+        var phi = face.getMaxMu();
         spectrum[fullDimension] = phi;
-        var next = face.divide();
+        var next = new ArrayList<KFacePair>();
+        next = face.fixate(next);
         if (next != null)
             stack.addAll(next);
 
         while (!stack.empty()) {
-            face = stack.pop();
-            if (face.isEmpty())
+            var facePair = stack.pop();
+            if (facePair.isEmpty())
                 continue;
-            face.divideByFactor();
-            phi = face.getMaxPhi();
-            if (spectrum[face.getCurrentDimension()] < phi)
-                spectrum[face.getCurrentDimension()] = phi;
-            next = face.divide();
+            facePair.divideByFactor();
+            phi = facePair.getMaxMu();
+            if (spectrum[facePair.getCurrentDimension()] < phi)
+                spectrum[facePair.getCurrentDimension()] = phi;
+            next = facePair.fixate();
             if (next == null)
                 continue;
             stack.addAll(next);
