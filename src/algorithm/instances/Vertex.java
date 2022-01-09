@@ -1,12 +1,10 @@
 package algorithm.instances;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Objects;
 
 public class Vertex {
     public static int[] binToDist;
-//    public static HashMap<Integer, Integer> binToDist;
     private final String binary;
     private final int pos;
 
@@ -28,17 +26,6 @@ public class Vertex {
         }
         return min - 1;
     }
-
-//    public void calculateDistances(ArrayList<Vertex> vertexes) {
-//        for (var vertex : vertexes) {
-//            if (vertex == this)
-//                continue;
-//            var dist = vertex.pos ^ this.pos;
-//            if (binToDist.containsKey(dist))
-//                continue;
-//            binToDist.put(dist, convertBinToDist(dist));
-//        }
-//    }
 
     public static int convertBinToDist(int dist) {
         var count = 0;
