@@ -13,19 +13,13 @@ public class Solver {
 
     public Solver(String table) {
         fullDimension = (int) (Math.log(table.length()) / Math.log(2));
-        Vertex.cleanDist(table.length());
+        Vertex.setupBinToDist(table.length());
         for (var i = 0; i < table.length(); i++) {
             if (table.charAt(i) == '1') {
                 vertexes.add(new Vertex(i, fullDimension));
             }
         }
         spectrum = new int[fullDimension + 1];
-        calculateDistances(table.length());
-    }
-
-    private void calculateDistances(int tableLength) {
-        for (var i = 0; i < tableLength; i++)
-            Vertex.binToDist[i] = Vertex.convertBinToDist(i);
     }
 
     public String solve() {

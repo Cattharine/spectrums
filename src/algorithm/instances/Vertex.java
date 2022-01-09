@@ -57,7 +57,9 @@ public class Vertex {
         return binary;
     }
 
-    public static void cleanDist(int tableLength) {
+    public static void setupBinToDist(int tableLength) {
         binToDist = new int[tableLength];
+        for (var i = 0; i < tableLength; i++)
+            Vertex.binToDist[i] = Vertex.convertBinToDist(i);
     }
 }
