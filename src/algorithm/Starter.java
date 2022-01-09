@@ -7,28 +7,36 @@ import java.util.TreeMap;
 
 public class Starter {
     public static TreeMap<String, ArrayList<String>> map = new TreeMap<>();
+    private static long timeCounter;
+    private static int lineCounter;
 
     public static void main(String[] args) {
-        var start = System.currentTimeMillis();
         startSolving();
-        var end = System.currentTimeMillis() - start - TimeZone.getDefault().getRawOffset();
-        System.out.printf("%1$TH:%1$TM:%1$TS:%1$TL%n", end);
+        System.out.printf("%1$TH:%1$TM:%1$TS:%1$TL%n", timeCounter / lineCounter - TimeZone.getDefault().getRawOffset());
         writeSortedMap();
     }
 
     private static void startSolving() {
         try {
             try (BufferedReader reader = new BufferedReader(new FileReader("./src/in.txt"))) {
-                String str = reader.readLine();
-                var list = str.split("[\\t\\s]+");
-                if (list.length > 1 && list[1].matches("[01]+"))
-                    solve(str);
-                while ((str = reader.readLine()) != null)
-                    solve(str);
+                String line = reader.readLine();
+                while (line != null) {
+                    var parts = line.split("[\\t\\s]+");
+                    if (checkLine(parts))
+                        solve(parts[0], parts[1]);
+                    line = reader.readLine();
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static boolean checkLine(String[] parts) {
+        if (parts.length < 2 || !parts[1].matches("[01]+"))
+            return false;
+        var checkNum = (int) Math.pow(2, (int) (Math.log(parts[1].length()) / Math.log(2)));
+        return checkNum == parts[1].length();
     }
 
     private static void writeSortedMap() {
@@ -45,14 +53,17 @@ public class Starter {
         }
     }
 
-    private static void solve(String input) {
-        var list = input.split("[\\t\\s]+");
-        var res = new Solver(list[1]).solve();
+    private static void solve(String name, String input) {
+        var start = System.currentTimeMillis();
+        var res = new Solver(input).solve();
+        var end = System.currentTimeMillis() - start;
+        timeCounter += end;
+        lineCounter += 1;
         if (map.containsKey(res))
-            map.get(res).add(list[0]);
+            map.get(res).add(name);
         else map.put(res, new ArrayList<>() {
             {
-                add(list[0]);
+                add(name);
             }
         });
     }
