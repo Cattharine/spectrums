@@ -8,11 +8,10 @@ import java.util.TreeMap;
 public class Starter {
     public static TreeMap<String, ArrayList<String>> map = new TreeMap<>();
     private static long timeCounter;
-    private static int lineCounter;
 
     public static void main(String[] args) {
         startSolving();
-        System.out.printf("%1$TH:%1$TM:%1$TS:%1$TL%n", timeCounter / lineCounter - TimeZone.getDefault().getRawOffset());
+        System.out.printf("%1$TH:%1$TM:%1$TS:%1$TL%n", timeCounter - TimeZone.getDefault().getRawOffset());
         writeSortedMap();
     }
 
@@ -58,7 +57,6 @@ public class Starter {
         var res = new Solver(input).solve();
         var end = System.currentTimeMillis() - start;
         timeCounter += end;
-        lineCounter += 1;
         if (map.containsKey(res))
             map.get(res).add(name);
         else map.put(res, new ArrayList<>() {
