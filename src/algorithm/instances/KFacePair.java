@@ -30,7 +30,7 @@ public class KFacePair {
     }
 
     public ArrayList<KFacePair> fixate() {
-        var res = new ArrayList<KFacePair>();
+        var res = new ArrayList<KFacePair>(2 * currentDimension);
         var firstDivision = first.fixate(res);
         var secondDivision = second.fixate(res);
         if (firstDivision == null && secondDivision == null)
@@ -39,8 +39,8 @@ public class KFacePair {
     }
 
     private ArrayList[] separateVertexes(int factor) {
-        var first = new ArrayList<Vertex>();
-        var second = new ArrayList<Vertex>();
+        var first = new ArrayList<Vertex>(vertexes.size() / 2);
+        var second = new ArrayList<Vertex>(vertexes.size() / 2);
 
         for (var vertex : vertexes) {
             if (vertex.getCharAt(factor) == '1')

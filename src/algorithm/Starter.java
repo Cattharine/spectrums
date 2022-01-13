@@ -54,9 +54,11 @@ public class Starter {
 
     private static void solve(String name, String input) {
         var start = System.currentTimeMillis();
-        var res = new Solver(input).solve();
+        var solver = new Solver(input);
+        solver.calculateSpectrum();
         var end = System.currentTimeMillis() - start;
         timeCounter += end;
+        var res = solver.toString();
         if (map.containsKey(res))
             map.get(res).add(name);
         else map.put(res, new ArrayList<>() {

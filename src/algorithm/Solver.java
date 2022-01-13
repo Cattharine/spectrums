@@ -9,11 +9,12 @@ import java.util.Stack;
 public class Solver {
     private final int[] spectrum;
     private final int fullDimension;
-    private final ArrayList<Vertex> vertexes = new ArrayList<>();
+    private final ArrayList<Vertex> vertexes;
 
     public Solver(String table) {
         fullDimension = (int) (Math.log(table.length()) / Math.log(2));
         Vertex.setupBinToDist(table.length());
+        vertexes = new ArrayList<>(table.length());
         for (var i = 0; i < table.length(); i++) {
             if (table.charAt(i) == '1') {
                 vertexes.add(new Vertex(i, fullDimension));
@@ -22,8 +23,8 @@ public class Solver {
         spectrum = new int[fullDimension + 1];
     }
 
-    public String solve() {
-        calculateSpectrum();
+    @Override
+    public String toString() {
         var res = new StringBuilder();
         for (var i = 0; i < spectrum.length - 1; i++) {
             res.append(spectrum[i]);
@@ -33,12 +34,12 @@ public class Solver {
         return res.toString();
     }
 
-    private void calculateSpectrum() {
+    public void calculateSpectrum() {
         var stack = new Stack<KFacePair>();
         var face = new KFace(fullDimension, vertexes, -1, fullDimension);
         var phi = face.getMaxMu();
         spectrum[fullDimension] = phi;
-        var next = new ArrayList<KFacePair>();
+        var next = new ArrayList<KFacePair>(fullDimension);
         next = face.fixate(next);
         if (next != null)
             stack.addAll(next);
