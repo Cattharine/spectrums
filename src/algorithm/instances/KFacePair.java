@@ -39,8 +39,8 @@ public class KFacePair {
     }
 
     private ArrayList[] separateVertexes(int factor) {
-        var first = new ArrayList<Vertex>(vertexes.size() / 2);
-        var second = new ArrayList<Vertex>(vertexes.size() / 2);
+        var first = new ArrayList<Vertex>(vertexes.size());
+        var second = new ArrayList<Vertex>(vertexes.size());
 
         for (var vertex : vertexes) {
             if (vertex.getCharAt(factor) == '1')
