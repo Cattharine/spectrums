@@ -3,50 +3,40 @@ package algorithm.instances;
 import java.util.ArrayList;
 
 public class KFace {
-    private final int fullDimension;
-    private final int currentDimension;
-    private final int currentK;
-    private int currentFixate;
-    private boolean isProcessed = false;
+    private static int n;
+    private final int k;
+    private final int t;
+    private int currentFixating;
     private final ArrayList<Vertex> vertexes;
 
-    public KFace(int currentDimension, ArrayList<Vertex> vertexes, int currentFixate,
-                 int currentK, int fullDimension) {
-        this.currentDimension = currentDimension;
+    public KFace(int k, ArrayList<Vertex> vertexes, int currentFixating, int t) {
+        this.k = k;
         this.vertexes = vertexes;
-        this.currentFixate = currentFixate;
-        this.fullDimension = fullDimension;
-        this.currentK = currentK;
+        this.currentFixating = currentFixating;
+        this.t = t;
     }
 
     public int getMaxMu() {
         var max = 0;
 
         for (var vertex : vertexes) {
-            var phi = vertex.getMinMu(vertexes, currentDimension);
+            var phi = vertex.getMinMu(vertexes, k);
             if (phi > max)
                 max = phi;
         }
 
-        isProcessed = true;
         return max;
     }
 
-    public boolean isProcessed() {
-        return isProcessed;
-    }
-
     public KFace[] fixate() {
-        if (currentK == currentFixate)
+        if (t == currentFixating)
             return null;
         var res = new KFace[2];
         var separatedVertexes = separateVertexes();
-        res[0] = new KFace(currentDimension - 1, separatedVertexes.getFirst(),
-                fullDimension - 1, currentFixate, fullDimension);
-        res[1] = new KFace(currentDimension - 1, separatedVertexes.getSecond(),
-                fullDimension - 1, currentFixate, fullDimension);
+        res[0] = new KFace(k - 1, separatedVertexes.getFirst(), n - 1, currentFixating);
+        res[1] = new KFace(k - 1, separatedVertexes.getSecond(), n - 1, currentFixating);
 
-        currentFixate--;
+        currentFixating--;
         return res;
     }
 
@@ -55,11 +45,15 @@ public class KFace {
         var second = new ArrayList<Vertex>(vertexes.size());
 
         for (var vertex : vertexes) {
-            if (vertex.getCharAt(currentFixate) == '1')
+            if (vertex.getCharAt(currentFixating) == '1')
                 first.add(vertex);
             else second.add(vertex);
         }
 
         return new Pair(first, second);
+    }
+
+    public static void setN(int value) {
+        n = value;
     }
 }

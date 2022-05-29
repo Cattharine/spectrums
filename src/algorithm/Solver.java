@@ -6,23 +6,24 @@ import java.util.ArrayList;
 
 public class Solver {
     private final int[] spectrum;
-    private final int fullDimension;
+    private final int n;
+    private int k = 0;
     private final ArrayList<Vertex> vertexes;
     private final KFace[][] processing;
-    private int currentK = 0;
 
     public Solver(String table) {
-        fullDimension = (int) (Math.log(table.length()) / Math.log(2));
+        n = (int) (Math.log(table.length()) / Math.log(2));
         Vertex.setupBinToDist(table.length());
         vertexes = new ArrayList<>(table.length());
         for (var i = 0; i < table.length(); i++) {
             if (table.charAt(i) == '1') {
-                vertexes.add(new Vertex(i, fullDimension));
+                vertexes.add(new Vertex(i, n));
             }
         }
-        spectrum = new int[fullDimension + 1];
-        processing = new KFace[fullDimension + 1][];
-        initiateProcessing();
+        KFace.setN(n);
+        spectrum = new int[n + 1];
+        processing = new KFace[n + 1][];
+        setUpProcessing();
     }
 
     @Override
@@ -38,45 +39,48 @@ public class Solver {
 
     public void calculateSpectrum() {
         while (processing[0][0] != null) {
-            var currentNodes = processing[currentK];
+            var level = processing[k];
             var index = -1;
-            if (currentNodes.length == 1) {
-                index = 0;
+            if (level[level.length - 1] != null) {
+                index = level.length - 1;
             }
-            else if (currentNodes[1] != null) {
-                index = 1;
-            }
-            else if (currentNodes[0] != null) {
+            else if (level[0] != null) {
                 index = 0;
             }
             else {
-                currentK--;
+                k--;
                 continue;
             }
-            var currentNode = currentNodes[index];
-            if (!currentNode.isProcessed()) {
-                var mu = currentNode.getMaxMu();
-                if (spectrum[fullDimension - currentK] < mu)
-                    spectrum[fullDimension - currentK] = mu;
-            }
-            var fixating = currentNode.fixate();
-            if (fixating != null) {
-                processing[currentK + 1] = fixating;
-                currentK++;
-            }
-            else {
-                currentNodes[index] = null;
-            }
+            var face = level[index];
+            var faces = face.fixate();
+            updateLevel(faces, index);
         }
     }
 
-    private void initiateProcessing() {
-        for (var i = 1; i <= fullDimension; i++) {
+    private void updateLevel(KFace[] faces, int index) {
+        if (faces != null) {
+            k++;
+            processing[k] = faces;
+            for (var face : faces) {
+                var mu = face.getMaxMu();
+                if (spectrum[n - k] < mu)
+                    spectrum[n - k] = mu;
+            }
+        }
+        else {
+            processing[k][index] = null;
+        }
+    }
+
+    private void setUpProcessing() {
+        for (var i = 1; i <= n; i++) {
             processing[i] = new KFace[2];
         }
 
         processing[0] = new KFace[1];
-        processing[0][0] = new KFace(fullDimension, vertexes, fullDimension - 1,
-                -1, fullDimension);
+        processing[0][0] = new KFace(n, vertexes, n - 1, -1);
+
+        var mu = processing[0][0].getMaxMu();
+        spectrum[n - k] = mu;
     }
 }
