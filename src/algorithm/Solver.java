@@ -61,8 +61,8 @@ public class Solver {
         if (faces != null) {
             k++;
             processing[k] = faces;
-            for (var face : faces) {
-                var mu = face.getMaxMu();
+            for (var i = 1; i > -1; i--) {
+                var mu = faces[i].getMaxMu();
                 if (spectrum[n - k] < mu)
                     spectrum[n - k] = mu;
             }
@@ -78,7 +78,9 @@ public class Solver {
         }
 
         processing[0] = new KFace[1];
-        processing[0][0] = new KFace(n, vertexes, n - 1, -1);
+        var name = new StringBuilder("0".repeat(n));
+
+        processing[0][0] = new KFace(n, vertexes, n - 1, -1, name);
 
         var mu = processing[0][0].getMaxMu();
         spectrum[n - k] = mu;
