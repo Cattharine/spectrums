@@ -5,14 +5,18 @@ import java.util.ArrayList;
 public class KFace {
     private final int fullDimension;
     private final int currentDimension;
-    private final int currentPos;
+    private final int currentK;
+    private int currentFixate;
+    private boolean isProcessed = false;
     private final ArrayList<Vertex> vertexes;
 
-    public KFace (int currentDimension, ArrayList<Vertex> vertexes, int currentPos, int fullDimension) {
+    public KFace(int currentDimension, ArrayList<Vertex> vertexes, int currentFixate,
+                 int currentK, int fullDimension) {
         this.currentDimension = currentDimension;
         this.vertexes = vertexes;
-        this.currentPos = currentPos;
+        this.currentFixate = currentFixate;
         this.fullDimension = fullDimension;
+        this.currentK = currentK;
     }
 
     public int getMaxMu() {
@@ -23,16 +27,39 @@ public class KFace {
             if (phi > max)
                 max = phi;
         }
+
+        isProcessed = true;
         return max;
     }
 
-    public ArrayList<KFacePair> fixate(ArrayList<KFacePair> faces) {
-        if (currentPos + 1 == fullDimension)
+    public boolean isProcessed() {
+        return isProcessed;
+    }
+
+    public KFace[] fixate() {
+        if (currentK == currentFixate)
             return null;
-        for (var i = currentPos + 1; i < fullDimension; i++) {
-            faces.add(new KFacePair(currentDimension - 1, vertexes, i, fullDimension));
+        var res = new KFace[2];
+        var separatedVertexes = separateVertexes();
+        res[0] = new KFace(currentDimension - 1, separatedVertexes.getFirst(),
+                fullDimension - 1, currentFixate, fullDimension);
+        res[1] = new KFace(currentDimension - 1, separatedVertexes.getSecond(),
+                fullDimension - 1, currentFixate, fullDimension);
+
+        currentFixate--;
+        return res;
+    }
+
+    private Pair separateVertexes() {
+        var first = new ArrayList<Vertex>(vertexes.size());
+        var second = new ArrayList<Vertex>(vertexes.size());
+
+        for (var vertex : vertexes) {
+            if (vertex.getCharAt(currentFixate) == '1')
+                first.add(vertex);
+            else second.add(vertex);
         }
 
-        return faces;
+        return new Pair(first, second);
     }
 }

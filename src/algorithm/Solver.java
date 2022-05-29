@@ -1,15 +1,15 @@
 package algorithm;
 
-import algorithm.instances.KFace;
-import algorithm.instances.KFacePair;
-import algorithm.instances.Vertex;
+import algorithm.instances.*;
+
 import java.util.ArrayList;
-import java.util.Stack;
 
 public class Solver {
     private final int[] spectrum;
     private final int fullDimension;
     private final ArrayList<Vertex> vertexes;
+    private final KFace[][] processing;
+    private int currentK = 0;
 
     public Solver(String table) {
         fullDimension = (int) (Math.log(table.length()) / Math.log(2));
@@ -21,6 +21,8 @@ public class Solver {
             }
         }
         spectrum = new int[fullDimension + 1];
+        processing = new KFace[fullDimension + 1][];
+        initiateProcessing();
     }
 
     @Override
@@ -35,27 +37,46 @@ public class Solver {
     }
 
     public void calculateSpectrum() {
-        var stack = new Stack<KFacePair>();
-        var face = new KFace(fullDimension, vertexes, -1, fullDimension);
-        var phi = face.getMaxMu();
-        spectrum[fullDimension] = phi;
-        var next = new ArrayList<KFacePair>(fullDimension);
-        next = face.fixate(next);
-        if (next != null)
-            stack.addAll(next);
-
-        while (!stack.empty()) {
-            var facePair = stack.pop();
-            if (facePair.isEmpty())
+        while (processing[0][0] != null) {
+            var currentNodes = processing[currentK];
+            var index = -1;
+            if (currentNodes.length == 1) {
+                index = 0;
+            }
+            else if (currentNodes[1] != null) {
+                index = 1;
+            }
+            else if (currentNodes[0] != null) {
+                index = 0;
+            }
+            else {
+                currentK--;
                 continue;
-            facePair.divideByFactor();
-            phi = facePair.getMaxMu();
-            if (spectrum[facePair.getCurrentDimension()] < phi)
-                spectrum[facePair.getCurrentDimension()] = phi;
-            next = facePair.fixate();
-            if (next == null)
-                continue;
-            stack.addAll(next);
+            }
+            var currentNode = currentNodes[index];
+            if (!currentNode.isProcessed()) {
+                var mu = currentNode.getMaxMu();
+                if (spectrum[fullDimension - currentK] < mu)
+                    spectrum[fullDimension - currentK] = mu;
+            }
+            var fixating = currentNode.fixate();
+            if (fixating != null) {
+                processing[currentK + 1] = fixating;
+                currentK++;
+            }
+            else {
+                currentNodes[index] = null;
+            }
         }
+    }
+
+    private void initiateProcessing() {
+        for (var i = 1; i <= fullDimension; i++) {
+            processing[i] = new KFace[2];
+        }
+
+        processing[0] = new KFace[1];
+        processing[0][0] = new KFace(fullDimension, vertexes, fullDimension - 1,
+                -1, fullDimension);
     }
 }
