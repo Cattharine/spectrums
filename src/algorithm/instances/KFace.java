@@ -9,7 +9,7 @@ public class KFace {
     private int toFixate;
     private final ArrayList<Vertex> vertexes;
     private final StringBuilder name;
-    private boolean wasPrinted = false;
+    private boolean wasPrinted = true;
 
     public KFace(int k, ArrayList<Vertex> vertexes, int toFixate, int t, StringBuilder name) {
         this.name = name;
@@ -32,10 +32,7 @@ public class KFace {
     }
 
     public KFace[] fixate() {
-        if (!wasPrinted) {
-            System.out.println(name.toString());
-            wasPrinted = true;
-        }
+        print();
         if (t == toFixate)
             return null;
         var res = new KFace[2];
@@ -67,6 +64,13 @@ public class KFace {
 
     public static void setN(int value) {
         n = value;
+    }
+
+    private void print() {
+        if (!wasPrinted) {
+            System.out.println(name.toString());
+            wasPrinted = true;
+        }
     }
 
     @Override
