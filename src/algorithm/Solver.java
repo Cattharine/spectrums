@@ -52,8 +52,18 @@ public class Solver {
                 continue;
             }
             var face = level[index];
+            process(face);
             var faces = face.fixate();
             updateLevel(faces, index);
+        }
+    }
+
+    private void process(KFace face) {
+        if (!face.isProcessed()) {
+            var mu = face.getMaxMu();
+            if (spectrum[n - k] < mu)
+                spectrum[n - k] = mu;
+            System.out.println(face);
         }
     }
 
@@ -61,11 +71,6 @@ public class Solver {
         if (faces != null) {
             k++;
             processing[k] = faces;
-            for (var i = 1; i > -1; i--) {
-                var mu = faces[i].getMaxMu();
-                if (spectrum[n - k] < mu)
-                    spectrum[n - k] = mu;
-            }
         }
         else {
             processing[k][index] = null;
@@ -81,8 +86,5 @@ public class Solver {
         var name = new StringBuilder("0".repeat(n));
 
         processing[0][0] = new KFace(n, vertexes, n - 1, -1, name);
-
-        var mu = processing[0][0].getMaxMu();
-        spectrum[n - k] = mu;
     }
 }

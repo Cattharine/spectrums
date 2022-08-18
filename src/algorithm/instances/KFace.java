@@ -9,7 +9,7 @@ public class KFace {
     private int toFixate;
     private final ArrayList<Vertex> vertexes;
     private final StringBuilder name;
-    private boolean wasPrinted = true;
+    private boolean isProcessed = false;
 
     public KFace(int k, ArrayList<Vertex> vertexes, int toFixate, int t, StringBuilder name) {
         this.name = name;
@@ -20,6 +20,7 @@ public class KFace {
     }
 
     public int getMaxMu() {
+        isProcessed = true;
         var max = 0;
 
         for (var vertex : vertexes) {
@@ -32,7 +33,6 @@ public class KFace {
     }
 
     public KFace[] fixate() {
-        print();
         if (t == toFixate)
             return null;
         var res = new KFace[2];
@@ -66,11 +66,8 @@ public class KFace {
         n = value;
     }
 
-    private void print() {
-        if (!wasPrinted) {
-            System.out.println(name.toString());
-            wasPrinted = true;
-        }
+    public boolean isProcessed() {
+        return isProcessed;
     }
 
     @Override
