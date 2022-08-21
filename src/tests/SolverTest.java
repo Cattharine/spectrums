@@ -3,6 +3,7 @@ package tests;
 import algorithm.Solver;
 import org.junit.Assert;
 import org.junit.Test;
+import straightforward.SFSolver;
 
 public class SolverTest {
     @Test
@@ -14,6 +15,19 @@ public class SolverTest {
         solver.calculateSpectrum();
         Assert.assertEquals("0, 1, 2, 1", solver.toString());
         solver = new Solver("0110");
+        solver.calculateSpectrum();
+        Assert.assertEquals("0, 1, 1", solver.toString());
+    }
+
+    @Test
+    public void checkSFSolve() {
+        var solver = new SFSolver("10111010");
+        solver.calculateSpectrum();
+        Assert.assertEquals("0, 1, 2, 0", solver.toString());
+        solver = new SFSolver("10011010");
+        solver.calculateSpectrum();
+        Assert.assertEquals("0, 1, 2, 1", solver.toString());
+        solver = new SFSolver("0110");
         solver.calculateSpectrum();
         Assert.assertEquals("0, 1, 1", solver.toString());
     }
@@ -87,6 +101,79 @@ public class SolverTest {
         solver.calculateSpectrum();
         Assert.assertEquals("0, 0, 0, 0", solver.toString());
         solver = new Solver("11111111");
+        solver.calculateSpectrum();
+        Assert.assertNotEquals("0, 0, 0, 1", solver.toString());
+    }
+
+    @Test
+    public void checkSF3D() {
+        var solver = new SFSolver("00000000");
+        solver.calculateSpectrum();
+        Assert.assertEquals("0, 0, 0, 0", solver.toString());
+        solver = new SFSolver("00000001");
+        solver.calculateSpectrum();
+        Assert.assertEquals("0, 1, 2, 3", solver.toString());
+        solver = new SFSolver("00000011");
+        solver.calculateSpectrum();
+        Assert.assertEquals("0, 1, 2, 0", solver.toString());
+        solver = new SFSolver("00000110");
+        solver.calculateSpectrum();
+        Assert.assertEquals("0, 1, 2, 1", solver.toString());
+        solver = new SFSolver("00000111");
+        solver.calculateSpectrum();
+        Assert.assertEquals("0, 1, 2, 0", solver.toString());
+        solver = new SFSolver("00001111");
+        solver.calculateSpectrum();
+        Assert.assertEquals("0, 1, 0, 0", solver.toString());
+        solver = new SFSolver("00010110");
+        solver.calculateSpectrum();
+        Assert.assertEquals("0, 1, 2, 1", solver.toString());
+        solver = new SFSolver("00010111");
+        solver.calculateSpectrum();
+        Assert.assertEquals("0, 1, 2, 0", solver.toString());
+        solver = new SFSolver("00011000");
+        solver.calculateSpectrum();
+        Assert.assertEquals("0, 1, 2, 2", solver.toString());
+        solver = new SFSolver("00011001");
+        solver.calculateSpectrum();
+        Assert.assertEquals("0, 1, 2, 1", solver.toString());
+        solver = new SFSolver("00011011");
+        solver.calculateSpectrum();
+        Assert.assertEquals("0, 1, 2, 0", solver.toString());
+        solver = new SFSolver("00011110");
+        solver.calculateSpectrum();
+        Assert.assertEquals("0, 1, 2, 1", solver.toString());
+        solver = new SFSolver("00011111");
+        solver.calculateSpectrum();
+        Assert.assertEquals("0, 1, 2, 0", solver.toString());
+        solver = new SFSolver("00111100");
+        solver.calculateSpectrum();
+        Assert.assertEquals("0, 1, 1, 0", solver.toString());
+        solver = new SFSolver("00111101");
+        solver.calculateSpectrum();
+        Assert.assertEquals("0, 1, 1, 0", solver.toString());
+        solver = new SFSolver("00111111");
+        solver.calculateSpectrum();
+        Assert.assertEquals("0, 1, 0, 0", solver.toString());
+        solver = new SFSolver("01101001");
+        solver.calculateSpectrum();
+        Assert.assertEquals("0, 1, 1, 1", solver.toString());
+        solver = new SFSolver("01101011");
+        solver.calculateSpectrum();
+        Assert.assertEquals("0, 1, 1, 1", solver.toString());
+        solver = new SFSolver("01101111");
+        solver.calculateSpectrum();
+        Assert.assertEquals("0, 1, 1, 0", solver.toString());
+        solver = new SFSolver("01111110");
+        solver.calculateSpectrum();
+        Assert.assertEquals("0, 1, 0, 0", solver.toString());
+        solver = new SFSolver("01111111");
+        solver.calculateSpectrum();
+        Assert.assertEquals("0, 1, 0, 0", solver.toString());
+        solver = new SFSolver("11111111");
+        solver.calculateSpectrum();
+        Assert.assertEquals("0, 0, 0, 0", solver.toString());
+        solver = new SFSolver("11111111");
         solver.calculateSpectrum();
         Assert.assertNotEquals("0, 0, 0, 1", solver.toString());
     }
