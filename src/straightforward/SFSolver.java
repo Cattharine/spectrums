@@ -19,6 +19,8 @@ public class SFSolver {
     }
 
     public void calculateSpectrum() {
+        if (n == 0)
+            return;
         spectrum[n] = processing[0].getMaxMu();
 
         while (processing[0] != null) {
