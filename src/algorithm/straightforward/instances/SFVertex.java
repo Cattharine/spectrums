@@ -1,26 +1,24 @@
-package algorithm.instances;
+package algorithm.straightforward.instances;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class Vertex {
-    public static int[] binToDist;
+public class SFVertex {
     private final String binary;
     private final int pos;
 
-    public Vertex(int pos, int fullD) {
+    public SFVertex(String binary, int pos) {
+        this.binary = binary;
         this.pos = pos;
-        var bin = Integer.toBinaryString(pos);
-        var filler = "0".repeat(Math.max(0, fullD - bin.length()));
-        this.binary = filler + bin;
     }
 
-    public int getMinMu(ArrayList<Vertex> vertexes, int currentDimension) {
+    public int getMinMu(ArrayList<SFVertex> vertexes, int currentDimension) {
         var min = currentDimension + 1;
         for (var vertex : vertexes) {
             if (this == vertex)
                 continue;
-            var distance = binToDist[vertex.pos ^ pos];
+            var xor = vertex.pos ^ pos;
+            var distance = convertBinToDist(xor);
             if (distance < min)
                 min = distance;
         }
@@ -43,7 +41,7 @@ public class Vertex {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Vertex vertex = (Vertex) o;
+        SFVertex vertex = (SFVertex) o;
         return pos == vertex.pos;
     }
 
@@ -55,11 +53,5 @@ public class Vertex {
     @Override
     public String toString() {
         return binary;
-    }
-
-    public static void setupBinToDist(int tableLength) {
-        binToDist = new int[tableLength];
-        for (var i = 0; i < tableLength; i++)
-            Vertex.binToDist[i] = Vertex.convertBinToDist(i);
     }
 }

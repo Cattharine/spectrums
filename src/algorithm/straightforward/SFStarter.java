@@ -1,11 +1,11 @@
-package algorithm;
+package algorithm.straightforward;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.TimeZone;
 import java.util.TreeMap;
 
-public class Starter {
+public class SFStarter {
     public static TreeMap<String, ArrayList<String>> map = new TreeMap<>();
     private static long timeCounter;
 
@@ -54,11 +54,11 @@ public class Starter {
 
     private static void solve(String name, String input) {
         var start = System.currentTimeMillis();
-        var solver = new Solver(input);
+        var solver = new SFSolver(input);
         solver.calculateSpectrum();
         var end = System.currentTimeMillis() - start;
         timeCounter += end;
-        var res = solver.toString();
+        var res = solver.getResult();
         if (map.containsKey(res))
             map.get(res).add(name);
         else map.put(res, new ArrayList<>() {

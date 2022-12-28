@@ -1,33 +1,23 @@
-package algorithm;
+package algorithm.better;
 
-import algorithm.instances.*;
+import algorithm.ISolver;
+import algorithm.better.instances.*;
 
 import java.util.ArrayList;
 
-public class Solver {
-    private final int[] spectrum;
-    private final int n;
+public class Solver implements ISolver {
+    private boolean toPrint = true;
+    private int[] spectrum;
+    private int n;
     private int k = 0;
-    private final ArrayList<Vertex> vertexes;
-    private final KFace[][] processing;
+    private ArrayList<Vertex> vertexes;
+    private KFace[][] processing;
 
     public Solver(String table) {
-        n = (int) (Math.log(table.length()) / Math.log(2));
-        Vertex.setupBinToDist(table.length());
-        vertexes = new ArrayList<>(table.length());
-        for (var i = 0; i < table.length(); i++) {
-            if (table.charAt(i) == '1') {
-                vertexes.add(new Vertex(i, n));
-            }
-        }
-        KFace.setN(n);
-        spectrum = new int[n + 1];
-        processing = new KFace[n + 1][];
-        setUpProcessing();
+        getNewEnter(table);
     }
 
-    @Override
-    public String toString() {
+    public String getResult() {
         var res = new StringBuilder();
         for (var i = 0; i < spectrum.length - 1; i++) {
             res.append(spectrum[i]);
@@ -63,7 +53,8 @@ public class Solver {
             var mu = face.getMaxMu();
             if (spectrum[n - k] < mu)
                 spectrum[n - k] = mu;
-            System.out.println(face);
+            if (toPrint)
+                System.out.println(face);
         }
     }
 
@@ -86,5 +77,24 @@ public class Solver {
         var name = new StringBuilder("0".repeat(n));
 
         processing[0][0] = new KFace(n, vertexes, n - 1, -1, name);
+    }
+
+    public void getNewEnter(String table) {
+        n = (int) (Math.log(table.length()) / Math.log(2));
+        Vertex.setupBinToDist(table.length());
+        vertexes = new ArrayList<>(table.length());
+        for (var i = 0; i < table.length(); i++) {
+            if (table.charAt(i) == '1') {
+                vertexes.add(new Vertex(i, n));
+            }
+        }
+        KFace.setN(n);
+        spectrum = new int[n + 1];
+        processing = new KFace[n + 1][];
+        setUpProcessing();
+    }
+
+    public void setPrintingState(boolean state) {
+        toPrint = state;
     }
 }

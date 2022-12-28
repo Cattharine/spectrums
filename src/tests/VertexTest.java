@@ -1,6 +1,6 @@
 package tests;
 
-import algorithm.instances.Vertex;
+import algorithm.better.instances.Vertex;
 import org.junit.Assert;
 import org.junit.Test;
 
