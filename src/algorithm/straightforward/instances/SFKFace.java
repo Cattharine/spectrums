@@ -1,4 +1,4 @@
-package straightforward.instances;
+package algorithm.straightforward.instances;
 
 import java.util.ArrayList;
 
@@ -10,7 +10,7 @@ public class SFKFace {
     private final int t;
     private final StringBuilder name;
     private String currentVal = "1";
-    private final boolean isPrinted = true;
+    private static boolean toPrint = true;
 
     public SFKFace(int k, int toFixate, int t, StringBuilder name) {
         this.k = k;
@@ -89,8 +89,12 @@ public class SFKFace {
     }
 
     private void print() {
-        if (isPrinted) {
+        if (toPrint) {
             System.out.println(name);
         }
+    }
+
+    public static void setPrintingState(boolean state) {
+        toPrint = state;
     }
 }

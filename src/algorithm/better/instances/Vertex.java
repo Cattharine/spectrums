@@ -1,4 +1,4 @@
-package algorithm.instances;
+package algorithm.better.instances;
 
 import java.util.ArrayList;
 import java.util.Objects;

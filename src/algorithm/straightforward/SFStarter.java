@@ -1,4 +1,4 @@
-package straightforward;
+package algorithm.straightforward;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ public class SFStarter {
         solver.calculateSpectrum();
         var end = System.currentTimeMillis() - start;
         timeCounter += end;
-        var res = solver.toString();
+        var res = solver.getResult();
         if (map.containsKey(res))
             map.get(res).add(name);
         else map.put(res, new ArrayList<>() {

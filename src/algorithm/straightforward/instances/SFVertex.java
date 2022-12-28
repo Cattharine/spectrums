@@ -1,6 +1,4 @@
-package straightforward.instances;
-
-import algorithm.instances.Vertex;
+package algorithm.straightforward.instances;
 
 import java.util.ArrayList;
 import java.util.Objects;
