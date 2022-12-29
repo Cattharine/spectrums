@@ -33,10 +33,6 @@ public class SFVertex {
         return count;
     }
 
-    public char getCharAt(int pos) {
-        return binary.charAt(pos);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

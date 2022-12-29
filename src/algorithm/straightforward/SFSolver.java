@@ -5,7 +5,6 @@ import algorithm.straightforward.instances.SFKFace;
 
 public class SFSolver implements ISolver {
     private int n;
-    private String table;
     private int[] spectrum;
     private int k;
     private SFKFace[] processing;
@@ -51,10 +50,9 @@ public class SFSolver implements ISolver {
         k = 0;
         n = (int) (Math.log(table.length()) / Math.log(2));
         SFKFace.setCommons(n, table);
-        this.table = table;
         spectrum = new int[n + 1];
         processing = new SFKFace[n + 1];
-        processing[0] = new SFKFace(n, n - 1, -1, new StringBuilder("0".repeat(n)));
+        processing[0] = new SFKFace(n,-1, new StringBuilder("0".repeat(n)));
     }
 
     public void setPrintingState(boolean state) {

@@ -9,7 +9,7 @@ public class Solver implements ISolver {
     private boolean toPrint = true;
     private int[] spectrum;
     private int n;
-    private int k = 0;
+    private int k;
     private ArrayList<Vertex> vertexes;
     private KFace[][] processing;
 
@@ -80,6 +80,7 @@ public class Solver implements ISolver {
     }
 
     public void getNewEnter(String table) {
+        k = 0;
         n = (int) (Math.log(table.length()) / Math.log(2));
         Vertex.setupBinToDist(table.length());
         vertexes = new ArrayList<>(table.length());
