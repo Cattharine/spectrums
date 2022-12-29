@@ -5,16 +5,16 @@ import java.util.ArrayList;
 public class SFKFace {
     private static String table;
     private static int n;
-    private final int k;
+    private final int p;
     private int toFixate;
     private final int t;
     private final StringBuilder name;
     private String currentVal = "1";
     private static boolean toPrint = true;
 
-    public SFKFace(int k, int toFixate, int t, StringBuilder name) {
-        this.k = k;
-        this.toFixate = toFixate;
+    public SFKFace(int p, int t, StringBuilder name) {
+        this.p = p;
+        this.toFixate = n - 1;
         this.t = t;
         this.name = name;
     }
@@ -25,7 +25,7 @@ public class SFKFace {
         var max = 0;
 
         for (var vertex : vertexes) {
-            var phi = vertex.getMinMu(vertexes, k);
+            var phi = vertex.getMinMu(vertexes, p);
             if (phi > max)
                 max = phi;
         }
@@ -36,7 +36,7 @@ public class SFKFace {
     public SFKFace fixate() {
         if (toFixate == t)
             return null;
-        var face = new SFKFace(k - 1, n - 1, toFixate,
+        var face = new SFKFace(p - 1, toFixate,
                 new StringBuilder(name).replace(toFixate, toFixate + 1, currentVal));
         if (currentVal.equals("1")) {
             currentVal = "2";
@@ -51,9 +51,9 @@ public class SFKFace {
     private ArrayList<SFVertex> getVertexes() {
         var res = new ArrayList<SFVertex>();
 
-        for (int i = 0; i < Math.pow(2, k); i++) {
+        for (int i = 0; i < Math.pow(2, p); i++) {
             var replacement = Integer.toBinaryString(i);
-            var filler = "0".repeat(Math.max(0, k - replacement.length()));
+            var filler = "0".repeat(Math.max(0, p - replacement.length()));
             replacement = filler + replacement;
             var binary = getVertexBinary(replacement);
             var pos = Integer.parseInt(binary, 2);
