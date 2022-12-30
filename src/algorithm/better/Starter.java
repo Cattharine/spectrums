@@ -55,6 +55,7 @@ public class Starter {
     private static void solve(String name, String input) {
         var start = System.currentTimeMillis();
         var solver = new Solver(input);
+        solver.setPrintingState(false);
         solver.calculateSpectrum();
         var end = System.currentTimeMillis() - start;
         timeCounter += end;
