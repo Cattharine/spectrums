@@ -55,6 +55,7 @@ public class SFStarter {
     private static void solve(String name, String input) {
         var start = System.currentTimeMillis();
         var solver = new SFSolver(input);
+        solver.setPrintingState(false);
         solver.calculateSpectrum();
         var end = System.currentTimeMillis() - start;
         timeCounter += end;
