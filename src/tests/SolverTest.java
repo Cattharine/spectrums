@@ -19,6 +19,13 @@ public class SolverTest {
         checkCommonSolve(solver);
     }
 
+    @Test
+    public void checkVSolve() {
+        var solver = new algorithm.visualizer.solver.Solver("1");
+
+        checkCommonSolve(solver);
+    }
+
     private void checkCommonSolve(ISolver solver) {
         solver.setPrintingState(false);
         checkEq(solver, "10111010", "0, 1, 2, 0");
@@ -35,6 +42,12 @@ public class SolverTest {
     @Test
     public void checkSF3D() {
         var solver = new SFSolver("00000000");
+        check3D(solver);
+    }
+
+    @Test
+    public void checkV3D() {
+        var solver = new algorithm.visualizer.solver.Solver("00000000");
         check3D(solver);
     }
 
@@ -74,6 +87,12 @@ public class SolverTest {
     @Test
     public void checkSF4D() {
         var solver = new SFSolver("0");
+        check4D(solver);
+    }
+
+    @Test
+    public void checkV4D() {
+        var solver = new algorithm.visualizer.solver.Solver("0");
         check4D(solver);
     }
 
