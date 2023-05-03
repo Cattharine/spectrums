@@ -7,8 +7,8 @@ public class TNode {
     private final String name;
     private final TNode parent;
     private final ArrayList<TNode> children = new ArrayList<>();
-    private final int normalWidth = 60;
-    private final int normalHeight = 150;
+    private int normalWidth = 60;
+    private int normalHeight = 80;
     private final int level;
     private Point pos;
     private static int levelNum;
@@ -20,6 +20,7 @@ public class TNode {
         this.parent = parent;
         this.level = level;
         TNode.levelNum = levelNum;
+        normalHeight = (int)(normalHeight * Math.sqrt(levelNum));
         if (maxPos == null) {
             maxPos = new int[levelNum];
         }
@@ -43,6 +44,9 @@ public class TNode {
             maxPos[level] = maxPos[level] + normalWidth;
             if (level < levelNum - 1)
                 maxPos[level + 1] = maxPos[level];
+            for (var k = level; k < levelNum; k++) {
+                maxPos[k] = maxPos[level];
+            }
         }
         else {
             pos = new Point((maxPos[level] + maxPos[level + 1] - normalWidth)/2, level * normalHeight);
