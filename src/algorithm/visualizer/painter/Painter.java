@@ -13,15 +13,52 @@ import java.util.ArrayList;
 public class Painter extends JPanel {
     private CubeContent activeCC;
     private int number = -1;
-    private ArrayList<CubeContent> cubes = new ArrayList<>();
-    private ArrayList<TreeContent> trees = new ArrayList<>();
+    private final ArrayList<CubeContent> cubes = new ArrayList<>();
+    private final ArrayList<TreeContent> trees = new ArrayList<>();
     private TreeContent activeTC;
     private PainterState state = PainterState.PLAIN;
     private IContent currentContent;
+    private final Button buttonTree;
+    private final Button buttonShowPathOrEsc;
+    private final JPanel southButtonPanel;
+    private final Button buttonGoToFace;
 
     public Painter() {
         setDoubleBuffered(true);
         setFocusable(true);
+        setLayout(new BorderLayout());
+
+        southButtonPanel = new JPanel();
+        setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+        southButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        add(southButtonPanel, BorderLayout.SOUTH);
+        southButtonPanel.setFocusable(false);
+
+        buttonGoToFace = new Button("Go to chosen face");
+        southButtonPanel.add(buttonGoToFace);
+        buttonGoToFace.setFocusable(false);
+        if (state != PainterState.SHOWING_TREE) {
+            buttonGoToFace.setEnabled(false);
+            buttonGoToFace.setVisible(false);
+        }
+
+        var title = state == PainterState.SHOWING_TREE? "Show cube" : "Show tree";
+        buttonTree = new Button(title);
+        southButtonPanel.add(buttonTree);
+        buttonTree.setFocusable(false);
+
+        title = state == PainterState.SHOWING_TREE? "Unchoose all" : "Show path";
+        buttonShowPathOrEsc = new Button(title);
+        southButtonPanel.add(buttonShowPathOrEsc);
+        buttonShowPathOrEsc.setFocusable(false);
+
+        var buttonPrev = new Button("Prev");
+        southButtonPanel.add(buttonPrev);
+        buttonPrev.setFocusable(false);
+
+        var buttonNext = new Button("Next");
+        southButtonPanel.add(buttonNext);
+        buttonNext.setFocusable(false);
 
         addMouseListener(new MouseAdapter() {
             @Override
@@ -81,6 +118,40 @@ public class Painter extends JPanel {
                 repaint();
             }
         });
+
+        buttonNext.addActionListener(e -> {
+            if (activeCC != null)
+                keyPressedDir(activeCC.nextPath(), (number + 1) % cubes.size());
+            invalidate();
+            repaint();
+        });
+
+        buttonPrev.addActionListener(e -> {
+            if (activeCC != null)
+                keyPressedDir(activeCC.prevPath(), (cubes.size() + number - 1) % cubes.size());
+            invalidate();
+            repaint();
+        });
+
+        buttonTree.addActionListener(e -> {
+            keyPressedT();
+            invalidate();
+            repaint();
+        });
+
+        buttonShowPathOrEsc.addActionListener(e -> {
+            if (state == PainterState.SHOWING_TREE)
+                keyPressedEscape();
+            else keyPressedS();
+            invalidate();
+            repaint();
+        });
+
+        buttonGoToFace.addActionListener(e -> {
+            keyPressedEnter();
+            invalidate();
+            repaint();
+        });
     }
 
     private void mousePressed2(MouseEvent e) {
@@ -130,9 +201,16 @@ public class Painter extends JPanel {
         if (state == PainterState.SHOWING_TREE) {
             currentContent = activeCC;
             state = PainterState.PLAIN;
+            setButtonStateSC();
         } else {
             currentContent = activeTC;
             state = PainterState.SHOWING_TREE;
+            buttonTree.setLabel("Show cube");
+            buttonShowPathOrEsc.setLabel("Unchoose all");
+            buttonShowPathOrEsc.setSize(buttonShowPathOrEsc.getPreferredSize());
+            buttonGoToFace.setEnabled(true);
+            buttonGoToFace.setVisible(true);
+            southButtonPanel.revalidate();
         }
         activeCC.setShowPaths(false);
     }
@@ -168,18 +246,38 @@ public class Painter extends JPanel {
                     activeCC.setShowPaths(true);
                     activeCC.setPath(chosen);
                     currentContent = activeCC;
+                    setButtonStateSC();
                 }
             }
         }
     }
 
+    private void setButtonStateSC() {
+        buttonTree.setLabel("Show tree");
+        buttonShowPathOrEsc.setLabel("Show path");
+        buttonShowPathOrEsc.setSize(buttonShowPathOrEsc.getPreferredSize());
+        buttonGoToFace.setEnabled(false);
+        buttonGoToFace.setVisible(false);
+        southButtonPanel.revalidate();
+    }
+
     @Override
     public void paint(Graphics g) {
         var g2 = (Graphics2D) g;
+        paintAdditionalButton();
         if (currentContent != null)
             currentContent.paint(g2, getWidth(), getHeight());
         else {
             g2.drawString("Ничего не выбрано", 20, 20);
+        }
+    }
+
+    private void paintAdditionalButton() {
+        if (state == PainterState.SHOWING_TREE) {
+            if (activeTC != null) {
+                var chosen = activeTC.getChosen();
+                buttonGoToFace.setEnabled(chosen > -1);
+            }
         }
     }
 

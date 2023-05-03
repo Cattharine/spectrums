@@ -50,7 +50,8 @@ public class Solver implements ISolver {
             var face = level[index];
             process(face);
             var faces = face.fixate();
-            tree.addChildren(face, faces);
+            if (tree != null)
+                tree.addChildren(face, faces);
             updateLevel(faces, index);
         }
     }
@@ -60,7 +61,8 @@ public class Solver implements ISolver {
             var mu = face.getMaxMu();
             if (spectrum[n - k] < mu) {
                 spectrum[n - k] = mu;
-                tree.makeBest(face);
+                if (tree != null)
+                    tree.makeBest(face);
             }
             if (toPrint)
                 System.out.println(face);

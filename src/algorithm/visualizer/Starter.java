@@ -14,8 +14,7 @@ public class Starter extends JFrame {
     private static Painter painter;
 
     public Starter() {
-        //layout 26. 57:35
-        super();
+        super("Boolean Cube Visualizer");
         setSize(new Dimension(800, 800));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
