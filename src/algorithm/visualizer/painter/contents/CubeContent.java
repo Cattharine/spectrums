@@ -78,11 +78,9 @@ public class CubeContent implements IContent {
 
     private void fillCoords() {
         axes = new double[n][2];
-//        var angle = 2 * Math.PI / (Math.ceil((n + 1.0) / 2) * 2 - 1);
         var angle = - Math.PI / (n + 1);
         for (var i = 0; i < n; i++) {
             double t = p * (n + 1) / (n + 2);
-//            double t = 0;
             var length = p + t * i;
             axes[i][0] = -length * Math.sin(i * angle);
             axes[i][1] = length * Math.cos(i * angle);
