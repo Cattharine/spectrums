@@ -10,7 +10,7 @@ import java.util.HashSet;
 
 public class CubeContent implements IContent {
     private final int n;
-    private final double p = 20;
+    private final double p = 60;
     private final int radius = 5;
     private double[][] axes;
     private final int[] axisChecker;
@@ -78,9 +78,11 @@ public class CubeContent implements IContent {
 
     private void fillCoords() {
         axes = new double[n][2];
-        var angle = 2 * Math.PI / (Math.ceil((n + 1.0) / 2) * 2 - 1);
+//        var angle = 2 * Math.PI / (Math.ceil((n + 1.0) / 2) * 2 - 1);
+        var angle = - Math.PI / (n + 1);
         for (var i = 0; i < n; i++) {
-            double t = p * 5 / 2;
+            double t = p * (n + 1) / (n + 2);
+//            double t = 0;
             var length = p + t * i;
             axes[i][0] = -length * Math.sin(i * angle);
             axes[i][1] = length * Math.cos(i * angle);
@@ -259,7 +261,7 @@ public class CubeContent implements IContent {
         }
 
         drawDisc(g2, 0, x1, y1, Color.BLACK);
-        g2.drawString(String.valueOf(i), x1 + 3, y1 - 3);
+        g2.drawString(String.valueOf(i), x1 + 4, y1 - 4);
     }
 
     private void drawDisc(Graphics2D g2, int add, int x1, int y1, Color color) {

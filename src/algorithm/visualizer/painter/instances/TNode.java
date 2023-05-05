@@ -14,6 +14,7 @@ public class TNode {
     private static int levelNum;
     private static int[] maxPos;
     private static int globalMaxPos = 0;
+    private static boolean isValid = false;
 
     public TNode(String name, TNode parent, int level, int levelNum) {
         this.name = name;
@@ -29,6 +30,8 @@ public class TNode {
     public void addChildren(TNode[] cNodes) {
         children.add(cNodes[0]);
         children.add(cNodes[1]);
+        resetMaxPos();
+        isValid = false;
     }
 
     public String getName() {
@@ -36,7 +39,7 @@ public class TNode {
     }
 
     public Point getPos(int width, int height) {
-        if (pos != null)
+        if (pos != null && isValid)
             return pos;
         if (children.size() == 0) {
             maxPos[level] = globalMaxPos;
@@ -65,6 +68,10 @@ public class TNode {
     public static void resetMaxPos() {
         maxPos = new int[levelNum];
         globalMaxPos = 0;
+    }
+
+    public static void setValid() {
+         isValid = true;
     }
 
     public TNode getParent() {

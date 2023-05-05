@@ -68,6 +68,7 @@ public class TreeContent implements IContent {
             drawDisc(g2, pos, Color.BLACK, 3);
             g2.drawString(table[i].getName(), pos.x + 3, pos.y - 3);
         }
+        TNode.setValid();
     }
 
     private void drawDisc(Graphics2D g2, Point pos, Color color, int rad) {
