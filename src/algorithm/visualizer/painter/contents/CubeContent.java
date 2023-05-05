@@ -31,7 +31,7 @@ public class CubeContent implements IContent {
         for (var i =0; i < n; i++) {
             axisChecker[i] = 1 << i;
         }
-        fillCoords();
+        fillAxes();
         fillPoints();
     }
 
@@ -76,7 +76,7 @@ public class CubeContent implements IContent {
         fillPoints();
     }
 
-    private void fillCoords() {
+    private void fillAxes() {
         axes = new double[n][2];
         var angle = - Math.PI / (n + 1);
         for (var i = 0; i < n; i++) {
