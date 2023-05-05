@@ -204,7 +204,7 @@ public class CubeContent implements IContent {
     }
 
     private void fillActive(Graphics2D g2, Point off, Integer[] aPoints, Color color, int width, int height) {
-        g2.setColor(color);
+        g2.setColor(Color.LIGHT_GRAY);
         fillActive(g2, aPoints, width, height);
         g2.setColor(Color.BLACK);
 
@@ -274,7 +274,7 @@ public class CubeContent implements IContent {
                 current = nextNum;
             }
 
-            g2.drawPolygon(new Polygon(x, y, edges.size()));
+            g2.fillPolygon(new Polygon(x, y, x.length));
         }
     }
 
