@@ -1,11 +1,12 @@
 package algorithm.visualizer.painter.contents;
 
 import algorithm.visualizer.painter.instances.Path;
+import algorithm.visualizer.painter.instances.Three;
 import algorithm.visualizer.solver.instances.Vertex;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 
 public class CubeContent implements IContent {
@@ -113,7 +114,7 @@ public class CubeContent implements IContent {
         var off = new Point(width / 2 + offset.x, height / 2 + offset.y);
         if (showPaths && paths.size() > 0) {
             findActive();
-            fillActive(g2, off, active, Color.LIGHT_GRAY);
+            fillActive(g2, off, active, Color.LIGHT_GRAY, width, height);
             drawPath(g2, width, height);
         }
         var pos0 = transform(width, height, points[0][0], points[0][1]);
@@ -202,46 +203,114 @@ public class CubeContent implements IContent {
         g2.setColor(Color.black);
     }
 
-    private void fillActive(Graphics2D g2, Point off, Integer[] aPoints, Color color) {
-        var set = new HashSet<Integer>();
-        Collections.addAll(set, aPoints);
-
+    private void fillActive(Graphics2D g2, Point off, Integer[] aPoints, Color color, int width, int height) {
         g2.setColor(color);
-        showActive(g2, aPoints, set, off, false);
+        fillActive(g2, aPoints, width, height);
         g2.setColor(Color.BLACK);
 
-        g2.setStroke(new BasicStroke(0.4f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 2f));
-        showActive(g2, aPoints, set, off, true);
+        g2.setStroke(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 2f));
+        drawActive(g2, aPoints, width, height);
 
         g2.setStroke(new BasicStroke(0.3f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 2f));
     }
 
-    private void showPolygon(Graphics2D g2, boolean toDraw, int[] x, int[] y) {
-        if (toDraw)
-            g2.drawPolygon(new Polygon(x, y, 4));
-        else g2.fill(new Polygon(x, y, 4));
+    private void fillActive(Graphics2D g2, Integer[] aPoints, int width, int height) {
+        if (aPoints.length > 0) {
+            var mostLeft = getMostLeft(aPoints);
+
+            var edges = getSortedEdgesOfCurPath(mostLeft);
+
+            fillActive(g2, edges, mostLeft, width, height);
+        }
     }
 
-    private void showActive(Graphics2D g2, Integer[] aPoints, HashSet<Integer> set, Point off, boolean toDraw) {
-        for (int i : aPoints) {
-            for (var k = 0; k < n; k++) {
-                for (var m = 0; m < n; m++) {
-                    var j = i ^ axisChecker[k] ^ axisChecker[m];
-                    var j1 = i ^ axisChecker[k];
-                    var j2 = i ^ axisChecker[m];
-                    if (set.contains(j) && set.contains(j1) && set.contains(j2)) {
-                        var x = new int[4];
-                        var y = new int[4];
-                        x[0] = (int) (scale * points[i][0]) + off.x;
-                        x[1] = (int) (scale * points[j1][0]) + off.x;
-                        x[2] = (int) (scale * points[j][0]) + off.x;
-                        x[3] = (int) (scale * points[j2][0]) + off.x;
-                        y[0] = -(int) (scale * points[i][1]) + off.y;
-                        y[1] = -(int) (scale * points[j1][1]) + off.y;
-                        y[2] = -(int) (scale * points[j][1]) + off.y;
-                        y[3] = -(int) (scale * points[j2][1]) + off.y;
-                        showPolygon(g2, toDraw, x, y);
-                    }
+    private int getMostLeft(Integer[] aPoints) {
+        var mostLeft = aPoints[0];
+
+        for (var i: aPoints) {
+            if (points[i][0] < points[mostLeft][0]) {
+                mostLeft = i;
+            }
+            else if (points[i][0] == points[mostLeft][0] && points[i][1] < points[mostLeft][1]) {
+                mostLeft = i;
+            }
+        }
+
+        return mostLeft;
+    }
+
+    private ArrayList<Three> getSortedEdgesOfCurPath(int mostLeft) {
+        var name = paths.get(currentPath).getName();
+        var edges = new ArrayList<Three>();
+
+        for (var i = 0; i < name.length(); i++) {
+            if (name.charAt(i) == '0') {
+                var another = mostLeft ^ axisChecker[n-i-1];
+                var edge = new Point2D.Double(points[another][0] - points[mostLeft][0],
+                        points[another][1] - points[mostLeft][1]);
+                if (edge.getX() * edge.getX() + edge.getY() * edge.getY() > 0) {
+                    edges.add(new Three(edge.x, edge.y, n- i -1));
+                }
+            }
+        }
+
+        edges.sort(this::compareEdges);
+        return edges;
+    }
+
+    private void fillActive(Graphics2D g2, ArrayList<Three> edges, int mostLeft, int width, int height) {
+        if (edges.size() > 0) {
+            var x = new int[edges.size() * 2];
+            var y = new int[edges.size() * 2];
+            var currPoint = transform(width, height, points[mostLeft][0], points[mostLeft][1]);
+            int current = mostLeft;
+            x[0] = currPoint.x;
+            y[0] = currPoint.y;
+            for (var i = 0; i < edges.size() * 2 - 1; i++) {
+                var nextNum = current ^ axisChecker[edges.get(i % edges.size()).getNum()];
+                var next = transform(width, height, points[nextNum][0], points[nextNum][1]);
+                x[i + 1] = next.x;
+                y[i + 1] = next.y;
+                current = nextNum;
+            }
+
+            g2.drawPolygon(new Polygon(x, y, edges.size()));
+        }
+    }
+
+    private int compareEdges(Three p1, Three p2) {
+        var cos1 = -p1.getY()/Math.sqrt(p1.getX()*p1.getX() + p1.getY() * p1.getY());
+        var cos2 = -p2.getY()/Math.sqrt(p2.getX()*p2.getX() + p2.getY() * p2.getY());
+        return Double.compare(cos1, cos2);
+    }
+
+    private void drawActive(Graphics2D g2, Integer[] aPoints, int width, int height) {
+        var edges = getActiveEdges();
+
+        drawActiveEdges(g2, aPoints, edges, width, height);
+    }
+
+    private ArrayList<Integer> getActiveEdges() {
+        var name = paths.get(currentPath).getName();
+        var edges = new ArrayList<Integer>();
+
+        for (var i = 0; i < name.length(); i++) {
+            if (name.charAt(i) == '0') {
+                edges.add(n - i - 1);
+            }
+        }
+
+        return edges;
+    }
+
+    private void drawActiveEdges(Graphics2D g2, Integer[] aPoints, ArrayList<Integer> edges, int width, int height) {
+        for (var i : aPoints) {
+            for (Integer edge : edges) {
+                var j = i ^ axisChecker[edge];
+                if (i > j) {
+                    var first = transform(width, height, points[i][0], points[i][1]);
+                    var second = transform(width, height, points[j][0], points[j][1]);
+                    g2.drawLine(first.x, first.y, second.x, second.y);
                 }
             }
         }
