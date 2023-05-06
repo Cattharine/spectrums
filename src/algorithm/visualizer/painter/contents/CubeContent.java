@@ -16,18 +16,18 @@ public class CubeContent implements IContent {
     private double[][] axes;
     private final int[] axisChecker;
     private double[][] points;
-    private Point offset = new Point(0 , 0);
+    private Point offset;
     private Point mousePos = new Point(0 , 0);
     private double scale = 1;
     private int chosen = -1;
     private Integer[] active = new Integer[0];
     private HashSet<Integer> activeVertexes = new HashSet<>();
     private ArrayList<Path> paths = new ArrayList<>();
-    private boolean showPaths = false;
     private int currentPath = 0;
 
     public CubeContent(int n) {
         this.n = n;
+        offset = new Point((int) p/2 * n, (int)p * n);
         axisChecker = new int[n];
         for (var i =0; i < n; i++) {
             axisChecker[i] = 1 << i;
@@ -51,19 +51,17 @@ public class CubeContent implements IContent {
     }
 
     public void findChosen(Point current) {
-        for (var i = 0; i < points.length; i++) {
-            if (shouldChoose(i, current)) {
-                chosen = i;
+        for (int axis : axisChecker) {
+            if (shouldChoose(axis, current)) {
+                chosen = axis;
                 break;
-            }
-            else chosen = -1;
+            } else chosen = -1;
         }
     }
 
     private boolean shouldChoose(int vertexNum, Point current) {
         var pos = transform(points[vertexNum][0], points[vertexNum][1]);
-        return Math.max(Math.abs(pos.x - current.x), Math.abs(pos.y - current.y)) <= radius / 2 + 1
-                && isAxis(vertexNum);
+        return Math.max(Math.abs(pos.x - current.x), Math.abs(pos.y - current.y)) <= radius / 2 + 1;
     }
 
     public void moveChosen(Point current) {
@@ -99,20 +97,14 @@ public class CubeContent implements IContent {
         }
     }
 
-    public void paint(Graphics2D g2, int width, int height) {
-        g2.setColor(Color.white);
-        g2.fillRect(0, 0, width, height);
-        g2.setColor(Color.BLACK);
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setStroke(new BasicStroke(0.3f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 2f));
-
-        drawCube(g2);
+    public void paint(Graphics2D g2, int width, int height, boolean showPaths) {
+        drawCube(g2, showPaths);
     }
 
-    private void drawCube(Graphics2D g2) {
+    private void drawCube(Graphics2D g2, boolean showPaths) {
         if (showPaths && paths.size() > 0) {
             findActive();
-            fillActive(g2, active, Color.LIGHT_GRAY);
+            showActive(g2, Color.LIGHT_GRAY);
             drawPath(g2);
         }
         var pos0 = transform(points[0][0], points[0][1]);
@@ -145,22 +137,19 @@ public class CubeContent implements IContent {
     private Integer[] getAllVertexesInFace(int count, String name) {
         var allVertexes = new Integer[(int) Math.pow(2, count)];
         for (var i = 0; i < allVertexes.length; i++) {
-            var base = new StringBuilder();
-            var replacement = Integer.toBinaryString(i);
-            var filler = "0".repeat(Math.max(0, count - replacement.length()));
-            replacement = filler + replacement;
+            var base = 0;
             var c = 0;
-            for (var k = 0; k < n; k++) {
-                switch (name.charAt(k)) {
-                    case '1' -> base.append('0');
-                    case '2' -> base.append('1');
-                    default -> {
-                        base.append(replacement.charAt(c));
-                        c++;
-                    }
+            for (var k = n - 1 ; k > -1; k--) {
+                if (name.charAt(k) == '2') {
+                    base = base ^ axisChecker[n - k - 1];
+                }
+                else if (name.charAt(k) == '0') {
+                    if ((i & axisChecker[c]) > 0)
+                        base = base ^ axisChecker[n - k - 1];
+                    c++;
                 }
             }
-            allVertexes[i] = Integer.parseInt(base.toString(), 2);
+            allVertexes[i] = base;
         }
         return allVertexes;
     }
@@ -190,47 +179,44 @@ public class CubeContent implements IContent {
         g2.setColor(Color.decode("#9E012B"));
         var current = points[start];
         for (var edge : edges) {
-            var next = points[start ^ axisChecker[edge]];
+            start = start ^ axisChecker[edge];
+            var next = points[start];
             var first = transform(current[0], current[1]);
             var second = transform(next[0], next[1]);
             g2.drawLine(first.x, first.y, second.x, second.y);
             current = next;
-            start = start ^ axisChecker[edge];
         }
         g2.setStroke(new BasicStroke(0.3f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 2f));
         g2.setColor(Color.black);
     }
 
-    private void fillActive(Graphics2D g2, Integer[] aPoints, Color color) {
+    private void showActive(Graphics2D g2, Color color) {
         g2.setColor(color);
-        fillActive(g2, aPoints);
+        fillActive(g2);
         g2.setColor(Color.BLACK);
 
         g2.setStroke(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 2f));
-        drawActive(g2, aPoints);
-
+        drawActive(g2);
         g2.setStroke(new BasicStroke(0.3f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 2f));
     }
 
-    private void fillActive(Graphics2D g2, Integer[] aPoints) {
-        if (aPoints.length > 0) {
-            var mostLeft = getMostLeft(aPoints);
+    private void fillActive(Graphics2D g2) {
+        var mostLeft = getMostLeft();
 
-            var edges = getSortedEdgesOfCurPath(mostLeft);
+        var edges = getSortedEdgesOfCurPath(mostLeft);
 
-            fillActive(g2, edges, mostLeft);
-        }
+        fillActivePolygon(g2, edges, mostLeft);
     }
 
-    private int getMostLeft(Integer[] aPoints) {
-        var mostLeft = aPoints[0];
+    private int getMostLeft() {
+        var mostLeft = 0;
+        var name = paths.get(currentPath).getName();
 
-        for (var i: aPoints) {
-            if (points[i][0] < points[mostLeft][0]) {
-                mostLeft = i;
-            }
-            else if (points[i][0] == points[mostLeft][0] && points[i][1] < points[mostLeft][1]) {
-                mostLeft = i;
+        for (var i = 0; i < axisChecker.length; i++) {
+            var axisPointNum = axisChecker[n - i - 1];
+            if (name.charAt(i) == '2' || (name.charAt(i) == '0' &&
+                    (points[axisPointNum][0] < 0 || (points[axisPointNum][0] == 0 && points[axisPointNum][1] < 0)))) {
+                mostLeft = mostLeft ^ axisPointNum;
             }
         }
 
@@ -247,7 +233,7 @@ public class CubeContent implements IContent {
                 var edge = new Point2D.Double(points[another][0] - points[mostLeft][0],
                         points[another][1] - points[mostLeft][1]);
                 if (edge.getX() * edge.getX() + edge.getY() * edge.getY() > 0) {
-                    edges.add(new Three(edge.x, edge.y, n- i -1));
+                    edges.add(new Three(edge.x, edge.y, n - i -1));
                 }
             }
         }
@@ -256,7 +242,7 @@ public class CubeContent implements IContent {
         return edges;
     }
 
-    private void fillActive(Graphics2D g2, ArrayList<Three> edges, int mostLeft) {
+    private void fillActivePolygon(Graphics2D g2, ArrayList<Three> edges, int mostLeft) {
         if (edges.size() > 0) {
             var x = new int[edges.size() * 2];
             var y = new int[edges.size() * 2];
@@ -282,10 +268,10 @@ public class CubeContent implements IContent {
         return Double.compare(cos1, cos2);
     }
 
-    private void drawActive(Graphics2D g2, Integer[] aPoints) {
+    private void drawActive(Graphics2D g2) {
         var edges = getActiveEdges();
 
-        drawActiveEdges(g2, aPoints, edges);
+        drawActiveEdges(g2, edges);
     }
 
     private ArrayList<Integer> getActiveEdges() {
@@ -301,8 +287,8 @@ public class CubeContent implements IContent {
         return edges;
     }
 
-    private void drawActiveEdges(Graphics2D g2, Integer[] aPoints, ArrayList<Integer> edges) {
-        for (var i : aPoints) {
+    private void drawActiveEdges(Graphics2D g2, ArrayList<Integer> edges) {
+        for (var i : active) {
             for (Integer edge : edges) {
                 var j = i ^ axisChecker[edge];
                 if (i > j) {
@@ -351,10 +337,6 @@ public class CubeContent implements IContent {
 
     public void setPaths(ArrayList<Path> paths) {
         this.paths = paths;
-    }
-
-    public void setShowPaths(boolean value) {
-        showPaths = value;
     }
 
     public int nextPath() {

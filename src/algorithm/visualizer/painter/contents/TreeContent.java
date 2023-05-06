@@ -14,6 +14,7 @@ public class TreeContent implements IContent {
     private Point offset = new Point(10, 20);
     private HashSet<Integer> chosen = new HashSet<>();
     private double scale = 1;
+    private final int radius = 3;
     private Point prev;
     private int[] best;
 
@@ -40,13 +41,7 @@ public class TreeContent implements IContent {
         }
     }
 
-    public void paint(Graphics2D g2, int width, int height) {
-        g2.setColor(Color.white);
-        g2.fillRect(0, 0, width, height);
-        g2.setColor(Color.BLACK);
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setStroke(new BasicStroke(0.3f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 2f));
-
+    public void paint(Graphics2D g2, int width, int height, boolean showPaths) {
         TNode.resetMaxPos();
         drawDiscs(g2);
         drawEdges(g2);
@@ -58,14 +53,15 @@ public class TreeContent implements IContent {
                 break;
             var pos = table[i].getPos();
             pos = transform(pos.x, pos.y);
+            var add = 6;
             if (chosen.contains(i)) {
-                drawDisc(g2, pos, Color.decode("#cc1100"), 9);
+                drawDisc(g2, pos, Color.decode("#cc1100"), radius + add);
             }
             var bestOnLevel  = best[table[i].getLevel()];
             if (i == 0 || (bestOnLevel > 0 && bestOnLevel == i)) {
-                drawDisc(g2, pos, Color.decode("#62EA02"), 9);
+                drawDisc(g2, pos, Color.decode("#62EA02"), radius + add);
             }
-            drawDisc(g2, pos, Color.BLACK, 3);
+            drawDisc(g2, pos, Color.BLACK, radius);
             g2.drawString(table[i].getName(), pos.x + 3, pos.y - 3);
         }
         TNode.setValid();
@@ -101,7 +97,7 @@ public class TreeContent implements IContent {
             if (table[i] != null) {
                 var nodePos = table[i].getPos();
                 nodePos = transform(nodePos.x, nodePos.y);
-                if (Math.abs(current.x - nodePos.x) <= 3 && Math.abs(current.y - nodePos.y) <= 3) {
+                if (Math.abs(current.x - nodePos.x) <= 3 && Math.abs(current.y - nodePos.y) <= radius) {
                     if (chosen.contains(i))
                         chosen.remove(i);
                     else chosen.add(i);

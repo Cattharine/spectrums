@@ -186,12 +186,10 @@ public class Painter extends JPanel {
         switch (state) {
             case PLAIN -> {
                 currentContent = activeCC;
-                activeCC.setShowPaths(true);
                 state = PainterState.SHOWING_PATH;
             }
             case SHOWING_PATH -> {
                 currentContent = activeCC;
-                activeCC.setShowPaths(false);
                 state = PainterState.PLAIN;
             }
         }
@@ -212,7 +210,6 @@ public class Painter extends JPanel {
             buttonGoToFace.setVisible(true);
             southButtonPanel.revalidate();
         }
-        activeCC.setShowPaths(false);
     }
 
     private void keyPressedDir(int pathNum, int contentNumber) {
@@ -243,7 +240,6 @@ public class Painter extends JPanel {
                 var chosen = activeTC.getChosen();
                 if (chosen > -1) {
                     state = PainterState.SHOWING_PATH;
-                    activeCC.setShowPaths(true);
                     activeCC.setPath(chosen);
                     currentContent = activeCC;
                     setButtonStateSC();
@@ -264,9 +260,14 @@ public class Painter extends JPanel {
     @Override
     public void paint(Graphics g) {
         var g2 = (Graphics2D) g;
+        g2.setColor(Color.white);
+        g2.fillRect(0, 0, getWidth(), getHeight());
+        g2.setColor(Color.BLACK);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setStroke(new BasicStroke(0.3f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 2f));
         paintAdditionalButton();
         if (currentContent != null)
-            currentContent.paint(g2, getWidth(), getHeight());
+            currentContent.paint(g2, getWidth(), getHeight(), state == PainterState.SHOWING_PATH);
         else {
             g2.drawString("Ничего не выбрано", 20, 20);
         }
