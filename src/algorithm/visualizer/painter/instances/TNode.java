@@ -43,8 +43,6 @@ public class TNode {
         if (children.size() == 0) {
             pos = new Point(maxPos[level], level * normalHeight);
             maxPos[level] = maxPos[level] + normalWidth;
-            if (level < levelNum - 1)
-                maxPos[level + 1] = maxPos[level];
             for (var k = level; k < levelNum; k++) {
                 maxPos[k] = maxPos[level];
             }
