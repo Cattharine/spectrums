@@ -13,7 +13,6 @@ public class TNode {
     private Point pos;
     private static int levelNum;
     private static int[] maxPos;
-    private static int globalMaxPos = 0;
     private static boolean isValid = false;
 
     public TNode(String name, TNode parent, int level, int levelNum) {
@@ -42,7 +41,6 @@ public class TNode {
         if (pos != null && isValid)
             return pos;
         if (children.size() == 0) {
-            maxPos[level] = globalMaxPos;
             pos = new Point(maxPos[level], level * normalHeight);
             maxPos[level] = maxPos[level] + normalWidth;
             if (level < levelNum - 1)
@@ -55,8 +53,6 @@ public class TNode {
             pos = new Point((maxPos[level] + maxPos[level + 1] - normalWidth)/2, level * normalHeight);
             maxPos[level] = maxPos[level + 1];
         }
-        if (maxPos[level] > globalMaxPos)
-            globalMaxPos = maxPos[level];
         return pos;
     }
 
@@ -67,7 +63,6 @@ public class TNode {
 
     public static void resetMaxPos() {
         maxPos = new int[levelNum];
-        globalMaxPos = 0;
     }
 
     public static void setValid() {
