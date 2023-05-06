@@ -267,7 +267,7 @@ public class Painter extends JPanel {
         g2.setStroke(new BasicStroke(0.3f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 2f));
         paintAdditionalButton();
         if (currentContent != null)
-            currentContent.paint(g2, getWidth(), getHeight(), state == PainterState.SHOWING_PATH);
+            currentContent.paint(g2, state == PainterState.SHOWING_PATH);
         else {
             g2.drawString("Ничего не выбрано", 20, 20);
         }

@@ -13,5 +13,5 @@ public interface IContent {
 
     void changeScale(Point current, double rot);
 
-    void paint(Graphics2D g2, int width, int height, boolean showPaths);
+    void paint(Graphics2D g2, boolean showPaths);
 }

@@ -97,7 +97,7 @@ public class CubeContent implements IContent {
         }
     }
 
-    public void paint(Graphics2D g2, int width, int height, boolean showPaths) {
+    public void paint(Graphics2D g2, boolean showPaths) {
         drawCube(g2, showPaths);
     }
 
