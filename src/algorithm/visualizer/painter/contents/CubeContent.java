@@ -98,10 +98,6 @@ public class CubeContent implements IContent {
     }
 
     public void paint(Graphics2D g2, boolean showPaths) {
-        drawCube(g2, showPaths);
-    }
-
-    private void drawCube(Graphics2D g2, boolean showPaths) {
         if (showPaths && paths.size() > 0) {
             findActive();
             showActive(g2, Color.LIGHT_GRAY);
