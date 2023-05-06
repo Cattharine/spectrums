@@ -45,10 +45,10 @@ public class CubeContent implements IContent {
     }
 
     public void changeScale(Point current, int width, int height, double rot) {
-        var vec = new Point(current.x - width/2, current.y - height/2);
-        offset = new Point((int)((offset.x - vec.x) / scale), (int)((offset.y - vec.y) / scale));
-        scale *= Math.pow(1.2, -rot);
-        offset = new Point((int) (offset.x * scale) + vec.x, (int) (offset.y * scale) + vec.y);
+        var s = Math.pow(1.2, -rot);
+        offset = new Point((int)((current.x - width / 2) * (1 - s) + s * offset.x),
+                (int)((current.y - height / 2) * (1 - s) + s * offset.y));
+        scale *= s;
     }
 
     public void findChosen(int width, int height, Point current) {
