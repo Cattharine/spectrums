@@ -5,13 +5,13 @@ import java.awt.*;
 public interface IContent {
     void preShift(Point current);
 
-    void preMoveChosen(int width, int height, Point current);
+    void preMoveChosen(Point current);
 
     void shiftAll(Point current);
 
-    void moveChosen(Point current, int width, int height);
+    void moveChosen(Point current);
 
-    void changeScale(Point current, int width, int height, double rot);
+    void changeScale(Point current, double rot);
 
     void paint(Graphics2D g2, int width, int height);
 }

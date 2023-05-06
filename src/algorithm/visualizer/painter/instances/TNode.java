@@ -37,7 +37,7 @@ public class TNode {
         return name;
     }
 
-    public Point getPos(int width, int height) {
+    public Point getPos() {
         if (pos != null && isValid)
             return pos;
         if (children.size() == 0) {

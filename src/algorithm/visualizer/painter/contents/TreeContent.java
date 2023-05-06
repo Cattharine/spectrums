@@ -48,15 +48,15 @@ public class TreeContent implements IContent {
         g2.setStroke(new BasicStroke(0.3f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 2f));
 
         TNode.resetMaxPos();
-        drawDiscs(g2, width, height);
-        drawEdges(g2, width, height);
+        drawDiscs(g2);
+        drawEdges(g2);
     }
 
-    private void drawDiscs(Graphics2D g2, int width, int height) {
+    private void drawDiscs(Graphics2D g2) {
         for (var i = table.length -1; i > -1; i--) {
             if (table[i] == null)
                 break;
-            var pos = table[i].getPos(width, height);
+            var pos = table[i].getPos();
             pos = transform(pos.x, pos.y);
             if (chosen.contains(i)) {
                 drawDisc(g2, pos, Color.decode("#cc1100"), 9);
@@ -76,14 +76,14 @@ public class TreeContent implements IContent {
         g2.fillOval(pos.x - rad/2, pos.y- rad/2, rad, rad);
     }
 
-    private void drawEdges(Graphics2D g2, int width, int height) {
+    private void drawEdges(Graphics2D g2) {
         for (var node: table) {
             if (node == null)
                 break;
             var parent = node.getParent();
             if (parent != null) {
-                var pos = node.getPos(width, height);
-                var parPos = parent.getPos(width, height);
+                var pos = node.getPos();
+                var parPos = parent.getPos();
                 pos = transform(pos.x, pos.y);
                 parPos = transform(parPos.x, parPos.y);
                 g2.drawLine(pos.x, pos.y, parPos.x, parPos.y);
@@ -96,10 +96,10 @@ public class TreeContent implements IContent {
         prev = current;
     }
 
-    public void findChosen(int width, int height, Point current) {
+    public void findChosen(Point current) {
         for (var i = 0; i < table.length; i++) {
             if (table[i] != null) {
-                var nodePos = table[i].getPos(width, height);
+                var nodePos = table[i].getPos();
                 nodePos = transform(nodePos.x, nodePos.y);
                 if (Math.abs(current.x - nodePos.x) <= 3 && Math.abs(current.y - nodePos.y) <= 3) {
                     if (chosen.contains(i))
@@ -115,7 +115,7 @@ public class TreeContent implements IContent {
         offset = new Point(current.x - mousePos.x, current.y - mousePos.y);
     }
 
-    public void moveChosen(Point current, int width, int height) {
+    public void moveChosen(Point current) {
         var diff = new Point((int)((current.x - prev.x) / scale), (int)((current.y - prev.y) / scale));
         for (var elem : chosen) {
             if (table.length > elem && elem > -1 && table[elem] != null) {
@@ -125,10 +125,10 @@ public class TreeContent implements IContent {
         prev = current;
     }
 
-    public void changeScale(Point current, int width, int height, double rot) {
-        offset = new Point((int)((offset.x - current.x) / scale), (int)((offset.y - current.y) / scale));
-        scale *= Math.pow(1.2, -rot);
-        offset = new Point((int) (offset.x * scale) + current.x, (int) (offset.y * scale) + current.y);
+    public void changeScale(Point current, double rot) {
+        var s = Math.pow(1.2, -rot);
+        offset = new Point((int)(current.x * (1 - s) + s * offset.x), (int)(current.y * (1 - s) + s * offset.y));
+        scale *= s;
     }
 
     public void unchooseAll() {
@@ -153,8 +153,8 @@ public class TreeContent implements IContent {
         memorizePos(current);
     }
 
-    public void preMoveChosen(int width, int height, Point current) {
-        findChosen(width, height, current);
+    public void preMoveChosen(Point current) {
+        findChosen(current);
         memorizePos(current);
     }
 

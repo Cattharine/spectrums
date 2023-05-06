@@ -162,7 +162,7 @@ public class Painter extends JPanel {
 
     private void mousePressed1(MouseEvent e) {
         if (currentContent != null) {
-            currentContent.preMoveChosen(getWidth(), getHeight(), e.getPoint());
+            currentContent.preMoveChosen(e.getPoint());
         }
     }
 
@@ -173,12 +173,12 @@ public class Painter extends JPanel {
 
     private void mouseDragged1(MouseEvent e) {
         if (currentContent != null)
-            currentContent.moveChosen(e.getPoint(), getWidth(), getHeight());
+            currentContent.moveChosen(e.getPoint());
     }
 
     private void mouseWheelMoved0(MouseWheelEvent e) {
         if (currentContent != null) {
-            currentContent.changeScale(e.getPoint(), getWidth(), getHeight(), e.getPreciseWheelRotation());
+            currentContent.changeScale(e.getPoint(), e.getPreciseWheelRotation());
         }
     }
 
