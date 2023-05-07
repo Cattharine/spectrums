@@ -11,7 +11,7 @@ public class TNode {
     private int normalHeight = 80;
     private final int level;
     private Point pos;
-    private static int levelNum;
+    private int levelNum;
     private static int[] maxPos;
     private static boolean isValid = false;
 
@@ -19,7 +19,7 @@ public class TNode {
         this.name = name;
         this.parent = parent;
         this.level = level;
-        TNode.levelNum = levelNum;
+        this.levelNum = levelNum;
         normalHeight = (int)(normalHeight * Math.sqrt(levelNum));
         if (maxPos == null) {
             maxPos = new int[levelNum];
@@ -59,7 +59,7 @@ public class TNode {
         return name;
     }
 
-    public static void resetMaxPos() {
+    public void resetMaxPos() {
         maxPos = new int[levelNum];
     }
 

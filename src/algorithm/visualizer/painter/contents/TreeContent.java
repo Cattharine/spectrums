@@ -42,7 +42,7 @@ public class TreeContent implements IContent {
     }
 
     public void paint(Graphics2D g2, boolean showPaths) {
-        TNode.resetMaxPos();
+        root.resetMaxPos();
         drawDiscs(g2);
         drawEdges(g2);
     }
