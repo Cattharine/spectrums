@@ -2,6 +2,7 @@ package tests;
 
 import algorithm.ISolver;
 import algorithm.better.Solver;
+import algorithm.straightforwardV2.SF2Solver;
 import org.junit.Assert;
 import org.junit.Test;
 import algorithm.straightforward.SFSolver;
@@ -23,6 +24,12 @@ public class SolverTest {
     public void checkVSolve() {
         var solver = new algorithm.visualizer.solver.Solver("1");
 
+        checkCommonSolve(solver);
+    }
+
+    @Test
+    public void checkSF2Solve() {
+        var solver = new SF2Solver("1");
         checkCommonSolve(solver);
     }
 
@@ -50,9 +57,14 @@ public class SolverTest {
         var solver = new algorithm.visualizer.solver.Solver("00000000");
         check3D(solver);
     }
+    @Test
+    public void checkSF23D() {
+        var solver = new SF2Solver("00000000");
+        check3D(solver);
+    }
 
     private void check3D(ISolver solver) {
-        solver.setPrintingState(false);
+        solver.setPrintingState(true);
         checkEq(solver, "00000000", "0, 0, 0, 0");
         checkEq(solver, "00000001", "0, 1, 2, 3");
         checkEq(solver, "00000011", "0, 1, 2, 0");
@@ -93,6 +105,12 @@ public class SolverTest {
     @Test
     public void checkV4D() {
         var solver = new algorithm.visualizer.solver.Solver("0");
+        check4D(solver);
+    }
+
+    @Test
+    public void checkSF24D() {
+        var solver = new SF2Solver("0");
         check4D(solver);
     }
 
