@@ -1,35 +1,35 @@
 package tests;
 
-import algorithm.ISolver;
-import algorithm.better.Solver;
-import algorithm.straightforwardV2.SF2Solver;
+import algorithms.ISolver;
+import algorithms.fast.FastSolver;
+import algorithms.treeSolver.TreeSolver;
+import algorithms.straightforwardV2.SF2Solver;
+import visualizer.extendedAlgorithms.treeSolver.TreeSolverExt;
 import org.junit.Assert;
 import org.junit.Test;
-import algorithm.straightforward.SFSolver;
 
 public class SolverTest {
     @Test
-    public void checkBetterSolve() {
-        var solver = new Solver("1");
+    public void checkTreeSolve() {
+        var solver = new TreeSolver("1");
         checkCommonSolve(solver);
     }
 
     @Test
-    public void checkSFSolve() {
-        var solver = new SFSolver("1");
-        checkCommonSolve(solver);
-    }
-
-    @Test
-    public void checkVSolve() {
-        var solver = new algorithm.visualizer.solver.Solver("1");
-
+    public void checkExtTreeSolve() {
+        var solver = new TreeSolverExt("1");
         checkCommonSolve(solver);
     }
 
     @Test
     public void checkSF2Solve() {
         var solver = new SF2Solver("1");
+        checkCommonSolve(solver);
+    }
+
+    @Test
+    public void checkFastSolve() {
+        var solver = new FastSolver("1");
         checkCommonSolve(solver);
     }
 
@@ -41,30 +41,31 @@ public class SolverTest {
     }
 
     @Test
-    public void checkBetter3D() {
-        var solver = new Solver("0");
+    public void checkTree3D() {
+        var solver = new TreeSolver("0");
         check3D(solver);
     }
 
     @Test
-    public void checkSF3D() {
-        var solver = new SFSolver("00000000");
+    public void checkExtTree3D() {
+        var solver = new TreeSolverExt("0");
         check3D(solver);
     }
 
-    @Test
-    public void checkV3D() {
-        var solver = new algorithm.visualizer.solver.Solver("00000000");
-        check3D(solver);
-    }
     @Test
     public void checkSF23D() {
         var solver = new SF2Solver("00000000");
         check3D(solver);
     }
 
+    @Test
+    public void checkFast3D() {
+        var solver = new FastSolver("00000000");
+        check3D(solver);
+    }
+
     private void check3D(ISolver solver) {
-        solver.setPrintingState(true);
+        solver.setPrintingState(false);
         checkEq(solver, "00000000", "0, 0, 0, 0");
         checkEq(solver, "00000001", "0, 1, 2, 3");
         checkEq(solver, "00000011", "0, 1, 2, 0");
@@ -91,26 +92,26 @@ public class SolverTest {
     }
 
     @Test
-    public void checkBetter4D() {
-        var solver = new Solver("0");
+    public void checkTree4D() {
+        var solver = new TreeSolver("0");
         check4D(solver);
     }
 
     @Test
-    public void checkSF4D() {
-        var solver = new SFSolver("0");
-        check4D(solver);
-    }
-
-    @Test
-    public void checkV4D() {
-        var solver = new algorithm.visualizer.solver.Solver("0");
+    public void checkExtTree4D() {
+        var solver = new TreeSolverExt("0");
         check4D(solver);
     }
 
     @Test
     public void checkSF24D() {
         var solver = new SF2Solver("0");
+        check4D(solver);
+    }
+
+    @Test
+    public void checkFast4D() {
+        var solver = new FastSolver("0");
         check4D(solver);
     }
 
@@ -522,13 +523,13 @@ public class SolverTest {
     }
 
     private void checkEq(ISolver sol, String table, String res) {
-        sol.getNewEnter(table);
+        sol.getNewEntry(table);
         sol.calculateSpectrum();
         Assert.assertEquals(res, sol.getResult());
     }
 
     private void checkNotEq(ISolver sol, String table, String res) {
-        sol.getNewEnter(table);
+        sol.getNewEntry(table);
         sol.calculateSpectrum();
         Assert.assertNotEquals(res, sol.getResult());
     }
