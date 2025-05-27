@@ -20,9 +20,6 @@ public abstract class Solver implements ISolver {
 
     @Override
     public void getNewEntry(String table) {
-        n = (int) (Math.log(table.length()) / Math.log(2));
+        n = ISolver.calculateN(table);
     }
-
-    @Override
-    public abstract void setPrintingState(boolean state);
 }

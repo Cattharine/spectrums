@@ -3,53 +3,46 @@ package algorithms.fast;
 import java.util.ArrayList;
 
 public class OrderedVertex {
-    private final int value;
-    private final String binary;
-    private int m = 0;
-    private int l = 0;
+    public final int value;
+    private int mu = 0;
+    private boolean isActive = false;
     private final ArrayList<OrderedVertex> covered = new ArrayList<>();
 
-    public OrderedVertex(int value, int fullD) {
+    public OrderedVertex(int value) {
         this.value = value;
-        var bin = Integer.toBinaryString(value);
-        var filler = "0".repeat(Math.max(0, fullD - bin.length()));
-        this.binary = filler + bin;
     }
 
-    public void setL(int l) {
-        this.l = l;
+    public void setState(boolean active) {
+        isActive = active;
+        mu = 0;
     }
 
     public void addCovered(OrderedVertex vertex) {
         covered.add(vertex);
     }
 
-    public int getValue() {
-        return value;
-    }
-
-    private int calculateP() {
-        var p = Integer.MAX_VALUE;
+    private int calculateMinOfCovered() {
+        var min = Integer.MAX_VALUE;
         for (var vertex : covered) {
-            if (vertex.m < p) {
-                p = vertex.m;
+            if (vertex.mu < min) {
+                min = vertex.mu;
             }
         }
-        return p;
+        return min;
     }
 
-    public int calculateM(int k) {
-        var p = calculateP();
-        if (p < k - 1 || (p == k - 1 && l == 1)) {
-            m = p;
-        } else if (p == k - 1 && l == 0) {
-            m = k;
+    public int calculateMu(int level) {
+        var minOfCovered = calculateMinOfCovered();
+        if (minOfCovered < level - 1 || isActive) {
+            mu = minOfCovered;
+        } else {
+            mu = level;
         }
-        return m;
+        return mu;
     }
 
     @Override
     public String toString() {
-        return binary;
+        return Integer.toBinaryString(value);
     }
 }
