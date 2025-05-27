@@ -7,5 +7,7 @@ public interface ISolver {
 
     void getNewEntry(String table);
 
-    void setPrintingState(boolean state);
+    static int calculateN(String table) {
+        return (int) (Math.log(table.length()) / Math.log(2));
+    }
 }

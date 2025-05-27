@@ -1,9 +1,8 @@
 package visualizer;
 
-import visualizer.extendedAlgorithms.treeSolver.TreeSolverExt;
-import visualizer.painter.Dispatcher;
-import visualizer.painter.painter.swing.SwingVisualizer;
-import visualizer.painter.painter.swing.SwingPainter;
+import visualizer.contents.Dispatcher;
+import visualizer.painter.PainterType;
+import visualizer.painter.swing.SwingVisualizer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,20 +14,18 @@ public class Starter extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setDefaultLookAndFeelDecorated(true);
-        SwingVisualizer visualizer = new SwingVisualizer(dispatcher, new SwingPainter());
+        SwingVisualizer visualizer = new SwingVisualizer(dispatcher);
         setJMenuBar(visualizer.getMenuBar());
         add(visualizer);
     }
 
     public static void main(String[] args) {
-        var dispatcher = new Dispatcher();
-        var solver = new TreeSolverExt("00");
-        var sm = new DispatchedSolutionsManager("./src/in.txt", dispatcher);
+        var dispatcher = new Dispatcher(PainterType.SWING);
         var frame = new Starter(dispatcher);
 
         frame.setVisible(true);
-        sm.solveAll(solver);
-        sm.writeSolutions();
-        sm.closeInputFile();
+        dispatcher.acceptAll("./src/in.txt");
+        frame.invalidate();
+        frame.repaint();
     }
 }
